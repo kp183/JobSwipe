@@ -1,0 +1,420 @@
+{% extends "base.html" %}
+
+{% block title %}Analyze Job Posting - Skill Gap Analyzer{% endblock %}
+
+{% block content %}
+<div class="max-w-4xl mx-auto">
+    <!-- Header -->
+    <div class="text-center mb-8">
+        <h1 class="text-3xl font-bold text-gray-900 mb-4">Job Posting Analysis</h1>
+        <p class="text-lg text-gray-600">
+            Paste a job posting below and add your current skills to get instant analysis and learning recommendations.
+        </p>
+    </div>
+
+    <!-- Analysis Form -->
+    <div class="bg-white rounded-xl shadow-sm p-6 mb-8">
+        <form id="analysis-form" class="space-y-6">
+            <!-- Job Posting Input -->
+            <div>
+                <label for="job-posting" class="block text-sm font-medium text-gray-700 mb-2">
+                    <i class="fas fa-briefcase mr-1"></i>
+                    Job Posting
+                </label>
+                <textarea 
+                    id="job-posting" 
+                    name="job_posting" 
+                    rows="12" 
+                    class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
+                    placeholder="Paste the complete job posting here including job description, requirements, qualifications, and salary information..."
+                    required
+                ></textarea>
+                <p class="text-sm text-gray-500 mt-1">
+                    Include the complete job description for best results. Our AI will extract skills, experience requirements, and salary information.
+                </p>
+            </div>
+
+            <!-- User Skills Input -->
+            <div>
+                <label class="block text-sm font-medium text-gray-700 mb-2">
+                    <i class="fas fa-user-cog mr-1"></i>
+                    Your Current Skills
+                </label>
+                
+                <!-- Skill Input -->
+                <div class="flex gap-2 mb-3">
+                    <input 
+                        type="text" 
+                        id="skill-input" 
+                        placeholder="Enter a skill (e.g., Python, React, SQL)"
+                        class="flex-1 px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
+                    >
+                    <select 
+                        id="proficiency-select" 
+                        class="px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
+                    >
+                        <option value="1">Beginner (1)</option>
+                        <option value="2">Basic (2)</option>
+                        <option value="3">Novice (3)</option>
+                        <option value="4">Intermediate (4)</option>
+                        <option value="5" selected>Competent (5)</option>
+                        <option value="6">Proficient (6)</option>
+                        <option value="7">Advanced (7)</option>
+                        <option value="8">Expert (8)</option>
+                        <option value="9">Master (9)</option>
+                        <option value="10">Guru (10)</option>
+                    </select>
+                    <button 
+                        type="button" 
+                        id="add-skill-btn" 
+                        class="bg-primary-600 text-white px-4 py-2 rounded-lg hover:bg-primary-700 transition-colors"
+                    >
+                        <i class="fas fa-plus"></i>
+                    </button>
+                </div>
+
+                <!-- Skills List -->
+                <div id="skills-list" class="space-y-2 mb-4">
+                    <!-- Skills will be added here dynamically -->
+                </div>
+
+                <!-- Quick Add Common Skills -->
+                <div class="border-t pt-4">
+                    <p class="text-sm text-gray-600 mb-2">Quick add common skills:</p>
+                    <div class="flex flex-wrap gap-2">
+                        <button type="button" class="quick-skill-btn bg-gray-100 text-gray-700 px-3 py-1 rounded-full text-sm hover:bg-gray-200 transition-colors" data-skill="Python">Python</button>
+                        <button type="button" class="quick-skill-btn bg-gray-100 text-gray-700 px-3 py-1 rounded-full text-sm hover:bg-gray-200 transition-colors" data-skill="JavaScript">JavaScript</button>
+                        <button type="button" class="quick-skill-btn bg-gray-100 text-gray-700 px-3 py-1 rounded-full text-sm hover:bg-gray-200 transition-colors" data-skill="React">React</button>
+                        <button type="button" class="quick-skill-btn bg-gray-100 text-gray-700 px-3 py-1 rounded-full text-sm hover:bg-gray-200 transition-colors" data-skill="Node.js">Node.js</button>
+                        <button type="button" class="quick-skill-btn bg-gray-100 text-gray-700 px-3 py-1 rounded-full text-sm hover:bg-gray-200 transition-colors" data-skill="SQL">SQL</button>
+                        <button type="button" class="quick-skill-btn bg-gray-100 text-gray-700 px-3 py-1 rounded-full text-sm hover:bg-gray-200 transition-colors" data-skill="AWS">AWS</button>
+                        <button type="button" class="quick-skill-btn bg-gray-100 text-gray-700 px-3 py-1 rounded-full text-sm hover:bg-gray-200 transition-colors" data-skill="Docker">Docker</button>
+                        <button type="button" class="quick-skill-btn bg-gray-100 text-gray-700 px-3 py-1 rounded-full text-sm hover:bg-gray-200 transition-colors" data-skill="Git">Git</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Submit Button -->
+            <div class="text-center">
+                <button 
+                    type="submit" 
+                    id="analyze-btn"
+                    class="bg-primary-600 text-white px-8 py-3 rounded-lg font-semibold hover:bg-primary-700 transition-colors"
+                >
+                    <i class="fas fa-chart-line mr-2"></i>
+                    Analyze Job Match
+                </button>
+            </div>
+        </form>
+    </div>
+
+    <!-- Results Section (Hidden initially) -->
+    <div id="results-section" class="hidden">
+        <div class="bg-white rounded-xl shadow-sm p-6">
+            <h2 class="text-2xl font-bold text-gray-900 mb-6">Analysis Results</h2>
+            <div id="results-content">
+                <!-- Results will be populated here -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Loading State -->
+    <div id="loading-section" class="hidden">
+        <div class="bg-white rounded-xl shadow-sm p-12 text-center">
+            <div class="loading-spinner w-12 h-12 border-4 border-primary-200 border-t-primary-600 rounded-full mx-auto mb-4"></div>
+            <h3 class="text-lg font-semibold text-gray-900 mb-2">Analyzing Job Posting...</h3>
+            <p class="text-gray-600">
+                Our AI is extracting skills, comparing with your profile, and generating personalized recommendations.
+            </p>
+            <div class="mt-4 text-sm text-gray-500">
+                This usually takes 5-10 seconds.
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+    // Skills management
+    let userSkills = [];
+
+    // Add skill functionality
+    function addSkill(skillName, proficiency) {
+        // Check if skill already exists
+        const existingSkill = userSkills.find(skill => skill.name.toLowerCase() === skillName.toLowerCase());
+        if (existingSkill) {
+            showToast('Skill already added', 'warning');
+            return;
+        }
+
+        const skill = {
+            name: skillName,
+            proficiency_level: parseInt(proficiency)
+        };
+
+        userSkills.push(skill);
+        renderSkillsList();
+        
+        // Clear input
+        document.getElementById('skill-input').value = '';
+        document.getElementById('proficiency-select').value = '5';
+    }
+
+    // Remove skill
+    function removeSkill(skillName) {
+        userSkills = userSkills.filter(skill => skill.name !== skillName);
+        renderSkillsList();
+    }
+
+    // Render skills list
+    function renderSkillsList() {
+        const skillsList = document.getElementById('skills-list');
+        
+        if (userSkills.length === 0) {
+            skillsList.innerHTML = '<p class="text-gray-500 text-sm italic">No skills added yet. Add your skills above.</p>';
+            return;
+        }
+
+        skillsList.innerHTML = userSkills.map(skill => `
+            <div class="flex items-center justify-between bg-gray-50 px-3 py-2 rounded-lg">
+                <div class="flex items-center space-x-3">
+                    <span class="font-medium text-gray-900">${skill.name}</span>
+                    <span class="text-sm text-gray-600">Level ${skill.proficiency_level}/10</span>
+                    <div class="w-20 bg-gray-200 rounded-full h-2">
+                        <div class="bg-primary-600 h-2 rounded-full" style="width: ${skill.proficiency_level * 10}%"></div>
+                    </div>
+                </div>
+                <button 
+                    type="button" 
+                    onclick="removeSkill('${skill.name}')"
+                    class="text-red-500 hover:text-red-700 transition-colors"
+                >
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+        `).join('');
+    }
+
+    // Event listeners
+    document.getElementById('add-skill-btn').addEventListener('click', () => {
+        const skillInput = document.getElementById('skill-input');
+        const proficiencySelect = document.getElementById('proficiency-select');
+        
+        if (skillInput.value.trim()) {
+            addSkill(skillInput.value.trim(), proficiencySelect.value);
+        }
+    });
+
+    // Enter key to add skill
+    document.getElementById('skill-input').addEventListener('keypress', (e) => {
+        if (e.key === 'Enter') {
+            e.preventDefault();
+            document.getElementById('add-skill-btn').click();
+        }
+    });
+
+    // Quick add skills
+    document.querySelectorAll('.quick-skill-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+            const skillName = btn.dataset.skill;
+            addSkill(skillName, 5); // Default to competent level
+        });
+    });
+
+    // Form submission
+    document.getElementById('analysis-form').addEventListener('submit', async (e) => {
+        e.preventDefault();
+        
+        const jobPosting = document.getElementById('job-posting').value.trim();
+        
+        if (!jobPosting) {
+            showToast('Please enter a job posting', 'error');
+            return;
+        }
+
+        if (userSkills.length === 0) {
+            showToast('Please add at least one skill', 'error');
+            return;
+        }
+
+        // Show loading state
+        document.getElementById('loading-section').classList.remove('hidden');
+        document.getElementById('results-section').classList.add('hidden');
+        
+        // Scroll to loading section
+        document.getElementById('loading-section').scrollIntoView({ behavior: 'smooth' });
+
+        try {
+            const response = await apiCall('/analyze', {
+                method: 'POST',
+                body: JSON.stringify({
+                    job_posting: jobPosting,
+                    user_skills: userSkills
+                })
+            });
+
+            // Hide loading, show results
+            document.getElementById('loading-section').classList.add('hidden');
+            document.getElementById('results-section').classList.remove('hidden');
+            
+            // Populate results
+            renderResults(response);
+            
+            // Scroll to results
+            document.getElementById('results-section').scrollIntoView({ behavior: 'smooth' });
+            
+            showToast('Analysis completed successfully!', 'success');
+
+        } catch (error) {
+            document.getElementById('loading-section').classList.add('hidden');
+            showToast('Analysis failed. Please try again.', 'error');
+        }
+    });
+
+    // Render analysis results
+    function renderResults(data) {
+        const resultsContent = document.getElementById('results-content');
+        
+        const confidenceScore = data.skill_comparison.confidence_score;
+        const readinessStatus = data.skill_comparison.readiness_status;
+        const missingSkills = data.skill_comparison.missing_skills;
+        const learningPath = data.learning_path;
+
+        resultsContent.innerHTML = `
+            <!-- Confidence Score -->
+            <div class="mb-8">
+                <div class="text-center">
+                    <div class="skill-meter w-32 h-32 rounded-full mx-auto mb-4 flex items-center justify-center" style="--percentage: ${confidenceScore}">
+                        <div class="bg-white w-24 h-24 rounded-full flex items-center justify-center">
+                            <div class="text-center">
+                                <div class="text-2xl font-bold text-gray-900">${confidenceScore}%</div>
+                                <div class="text-sm text-gray-600">Match</div>
+                            </div>
+                        </div>
+                    </div>
+                    <h3 class="text-xl font-semibold text-gray-900 mb-2">Job Readiness Score</h3>
+                    <p class="text-lg ${getStatusColor(readinessStatus)} font-medium">${readinessStatus}</p>
+                </div>
+            </div>
+
+            <!-- Missing Skills -->
+            ${missingSkills.length > 0 ? `
+            <div class="mb-8">
+                <h3 class="text-xl font-semibold text-gray-900 mb-4">
+                    <i class="fas fa-exclamation-triangle text-warning-500 mr-2"></i>
+                    Skills to Develop
+                </h3>
+                <div class="space-y-3">
+                    ${missingSkills.map(skill => `
+                        <div class="border border-gray-200 rounded-lg p-4">
+                            <div class="flex items-center justify-between mb-2">
+                                <h4 class="font-medium text-gray-900">${skill.skill_name}</h4>
+                                <span class="px-2 py-1 rounded-full text-xs font-medium ${getPriorityColor(skill.priority)}">
+                                    ${skill.priority}
+                                </span>
+                            </div>
+                            <div class="flex items-center space-x-4 text-sm text-gray-600">
+                                <span>Current: ${skill.current_proficiency}/10</span>
+                                <span>Required: ${skill.required_proficiency}/10</span>
+                                <span>Est. Time: ${skill.learning_time_days} days</span>
+                            </div>
+                        </div>
+                    `).join('')}
+                </div>
+            </div>
+            ` : ''}
+
+            <!-- Learning Path -->
+            ${learningPath.milestones && learningPath.milestones.length > 0 ? `
+            <div class="mb-8">
+                <h3 class="text-xl font-semibold text-gray-900 mb-4">
+                    <i class="fas fa-road text-primary-500 mr-2"></i>
+                    Personalized Learning Path
+                </h3>
+                <div class="bg-gray-50 rounded-lg p-4 mb-4">
+                    <div class="flex items-center justify-between text-sm">
+                        <span>Total Duration: <strong>${learningPath.total_duration_days} days</strong></span>
+                        <span>Target Completion: <strong>${learningPath.estimated_completion_date}</strong></span>
+                    </div>
+                </div>
+                <div class="space-y-4">
+                    ${learningPath.milestones.map((milestone, index) => `
+                        <div class="border border-gray-200 rounded-lg p-4">
+                            <div class="flex items-center mb-3">
+                                <div class="bg-primary-600 text-white w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold mr-3">
+                                    ${index + 1}
+                                </div>
+                                <div>
+                                    <h4 class="font-medium text-gray-900">${milestone.skill_name}</h4>
+                                    <p class="text-sm text-gray-600">${milestone.duration_days} days • ${milestone.start_date} to ${milestone.end_date}</p>
+                                </div>
+                            </div>
+                            
+                            ${milestone.courses && milestone.courses.length > 0 ? `
+                            <div class="mt-3">
+                                <p class="text-sm font-medium text-gray-700 mb-2">Recommended Courses:</p>
+                                <div class="space-y-2">
+                                    ${milestone.courses.slice(0, 3).map(course => `
+                                        <div class="flex items-center justify-between bg-white p-3 rounded border">
+                                            <div>
+                                                <h5 class="font-medium text-gray-900">${course.title}</h5>
+                                                <p class="text-sm text-gray-600">${course.provider} • ${course.duration} • ⭐ ${course.rating}</p>
+                                            </div>
+                                            <div class="text-right">
+                                                <div class="text-sm font-medium ${course.is_free ? 'text-success-600' : 'text-gray-900'}">
+                                                    ${course.is_free ? 'Free' : '₹' + course.price_inr}
+                                                </div>
+                                                <a href="${course.url}" target="_blank" class="text-primary-600 hover:text-primary-700 text-sm">
+                                                    View Course →
+                                                </a>
+                                            </div>
+                                        </div>
+                                    `).join('')}
+                                </div>
+                            </div>
+                            ` : ''}
+                        </div>
+                    `).join('')}
+                </div>
+            </div>
+            ` : ''}
+
+            <!-- Actions -->
+            <div class="text-center pt-6 border-t">
+                <button onclick="window.print()" class="bg-gray-600 text-white px-6 py-2 rounded-lg mr-4 hover:bg-gray-700 transition-colors">
+                    <i class="fas fa-print mr-2"></i>
+                    Save Results
+                </button>
+                <a href="/analyze" class="bg-primary-600 text-white px-6 py-2 rounded-lg hover:bg-primary-700 transition-colors">
+                    <i class="fas fa-plus mr-2"></i>
+                    Analyze Another Job
+                </a>
+            </div>
+        `;
+    }
+
+    // Helper functions for styling
+    function getStatusColor(status) {
+        const colors = {
+            'Ready to Apply': 'text-success-600',
+            'Almost Ready': 'text-warning-600',
+            'Needs Preparation': 'text-warning-600',
+            'Not Ready Yet': 'text-danger-600'
+        };
+        return colors[status] || 'text-gray-600';
+    }
+
+    function getPriorityColor(priority) {
+        const colors = {
+            'critical': 'bg-danger-100 text-danger-800',
+            'important': 'bg-warning-100 text-warning-800',
+            'optional': 'bg-gray-100 text-gray-800'
+        };
+        return colors[priority] || 'bg-gray-100 text-gray-800';
+    }
+
+    // Initialize
+    renderSkillsList();
+</script>
+{% endblock %}

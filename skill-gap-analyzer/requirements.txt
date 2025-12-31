@@ -1,0 +1,45 @@
+# Flask and web framework dependencies
+Flask==2.3.3
+Flask-CORS==4.0.0
+Werkzeug==2.3.7
+
+# Google AI Studio and Firebase dependencies
+google-generativeai==0.3.2
+firebase-admin==6.2.0
+google-cloud-firestore==2.13.1
+
+# HTTP requests and API integration
+requests==2.31.0
+urllib3==2.0.7
+
+# Environment and configuration
+python-dotenv==1.0.0
+
+# Data processing and validation
+pydantic==2.5.2
+marshmallow==3.20.1
+
+# Caching and performance
+redis==5.0.1
+Flask-Caching==2.1.0
+
+# Testing dependencies
+pytest==7.4.3
+pytest-flask==1.3.0
+hypothesis==6.92.1
+pytest-mock==3.12.0
+
+# Development and debugging
+python-json-logger==2.0.7
+gunicorn==21.2.0
+
+# HTML parsing and web scraping (for course integration)
+beautifulsoup4==4.12.2
+lxml==4.9.3
+
+# Date and time handling
+python-dateutil==2.8.2
+
+# Security and authentication
+cryptography==41.0.8
+PyJWT==2.8.0

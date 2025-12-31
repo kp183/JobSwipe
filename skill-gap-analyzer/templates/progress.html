@@ -1,0 +1,317 @@
+{% extends "base.html" %}
+
+{% block title %}Progress Tracking - Skill Gap Analyzer{% endblock %}
+
+{% block content %}
+<div class="max-w-6xl mx-auto">
+    <!-- Header -->
+    <div class="text-center mb-8">
+        <h1 class="text-3xl font-bold text-gray-900 mb-4">Learning Progress Dashboard</h1>
+        <p class="text-lg text-gray-600">
+            Track your skill development journey and celebrate your achievements.
+        </p>
+    </div>
+
+    {% if progress %}
+    <!-- Progress Overview -->
+    <div class="grid md:grid-cols-4 gap-6 mb-8">
+        <div class="bg-white rounded-xl shadow-sm p-6 text-center">
+            <div class="bg-primary-100 w-12 h-12 rounded-full flex items-center justify-center mx-auto mb-3">
+                <i class="fas fa-cogs text-primary-600 text-xl"></i>
+            </div>
+            <div class="text-2xl font-bold text-gray-900 mb-1">{{ progress.statistics.total_skills }}</div>
+            <div class="text-sm text-gray-600">Skills Tracked</div>
+        </div>
+        
+        <div class="bg-white rounded-xl shadow-sm p-6 text-center">
+            <div class="bg-success-100 w-12 h-12 rounded-full flex items-center justify-center mx-auto mb-3">
+                <i class="fas fa-chart-line text-success-600 text-xl"></i>
+            </div>
+            <div class="text-2xl font-bold text-gray-900 mb-1">{{ progress.statistics.average_proficiency }}/10</div>
+            <div class="text-sm text-gray-600">Avg Proficiency</div>
+        </div>
+        
+        <div class="bg-white rounded-xl shadow-sm p-6 text-center">
+            <div class="bg-warning-100 w-12 h-12 rounded-full flex items-center justify-center mx-auto mb-3">
+                <i class="fas fa-trophy text-warning-600 text-xl"></i>
+            </div>
+            <div class="text-2xl font-bold text-gray-900 mb-1">{{ progress.progress_history|length }}</div>
+            <div class="text-sm text-gray-600">Updates Made</div>
+        </div>
+        
+        <div class="bg-white rounded-xl shadow-sm p-6 text-center">
+            <div class="bg-danger-100 w-12 h-12 rounded-full flex items-center justify-center mx-auto mb-3">
+                <i class="fas fa-calendar text-danger-600 text-xl"></i>
+            </div>
+            <div class="text-2xl font-bold text-gray-900 mb-1">
+                {% if progress.statistics.last_updated %}
+                {{ progress.statistics.last_updated[:10] }}
+                {% else %}
+                Never
+                {% endif %}
+            </div>
+            <div class="text-sm text-gray-600">Last Updated</div>
+        </div>
+    </div>
+
+    <!-- Current Skills -->
+    {% if progress.current_skills %}
+    <div class="bg-white rounded-xl shadow-sm p-6 mb-8">
+        <div class="flex items-center justify-between mb-6">
+            <h2 class="text-xl font-semibold text-gray-900">
+                <i class="fas fa-user-cog text-primary-600 mr-2"></i>
+                Current Skills
+            </h2>
+            <button id="add-skill-btn" class="bg-primary-600 text-white px-4 py-2 rounded-lg hover:bg-primary-700 transition-colors">
+                <i class="fas fa-plus mr-2"></i>
+                Update Skill
+            </button>
+        </div>
+        
+        <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
+            {% for skill_key, skill in progress.current_skills.items() %}
+            <div class="border border-gray-200 rounded-lg p-4 hover:shadow-md transition-shadow">
+                <div class="flex items-center justify-between mb-3">
+                    <h3 class="font-medium text-gray-900">{{ skill.skill_name }}</h3>
+                    <span class="text-sm text-gray-500">{{ skill.proficiency_level }}/10</span>
+                </div>
+                
+                <div class="mb-3">
+                    <div class="w-full bg-gray-200 rounded-full h-2">
+                        <div class="bg-primary-600 h-2 rounded-full transition-all duration-300" 
+                             style="width: {{ skill.proficiency_level * 10 }}%"></div>
+                    </div>
+                </div>
+                
+                <div class="flex items-center justify-between text-sm">
+                    <span class="text-gray-600">
+                        Updated: {{ skill.updated_at[:10] if skill.updated_at else 'Unknown' }}
+                    </span>
+                    <button onclick="updateSkill('{{ skill.skill_name }}', {{ skill.proficiency_level }})" 
+                            class="text-primary-600 hover:text-primary-700">
+                        <i class="fas fa-edit"></i>
+                    </button>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+    {% endif %}
+
+    <!-- Progress History -->
+    {% if progress.progress_history %}
+    <div class="bg-white rounded-xl shadow-sm p-6 mb-8">
+        <h2 class="text-xl font-semibold text-gray-900 mb-6">
+            <i class="fas fa-history text-success-600 mr-2"></i>
+            Recent Progress Updates
+        </h2>
+        
+        <div class="space-y-4">
+            {% for update in progress.progress_history[:10] %}
+            <div class="flex items-center space-x-4 p-4 bg-gray-50 rounded-lg">
+                <div class="bg-success-100 w-10 h-10 rounded-full flex items-center justify-center">
+                    <i class="fas fa-arrow-up text-success-600"></i>
+                </div>
+                <div class="flex-1">
+                    <div class="font-medium text-gray-900">{{ update.skill_name }}</div>
+                    <div class="text-sm text-gray-600">
+                        Updated proficiency to {{ update.proficiency_level }}/10
+                    </div>
+                </div>
+                <div class="text-sm text-gray-500">
+                    {{ update.updated_at[:10] if update.updated_at else 'Unknown date' }}
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+    {% endif %}
+
+    <!-- Skill Update Modal -->
+    <div id="skill-modal" class="fixed inset-0 bg-black bg-opacity-50 hidden z-50">
+        <div class="flex items-center justify-center min-h-screen p-4">
+            <div class="bg-white rounded-xl shadow-xl max-w-md w-full p-6">
+                <div class="flex items-center justify-between mb-4">
+                    <h3 class="text-lg font-semibold text-gray-900">Update Skill Progress</h3>
+                    <button onclick="closeSkillModal()" class="text-gray-400 hover:text-gray-600">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+                
+                <form id="skill-update-form" class="space-y-4">
+                    <div>
+                        <label for="modal-skill-name" class="block text-sm font-medium text-gray-700 mb-1">
+                            Skill Name
+                        </label>
+                        <input type="text" 
+                               id="modal-skill-name" 
+                               class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
+                               placeholder="Enter skill name">
+                    </div>
+                    
+                    <div>
+                        <label for="modal-proficiency" class="block text-sm font-medium text-gray-700 mb-1">
+                            Proficiency Level
+                        </label>
+                        <select id="modal-proficiency" 
+                                class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500">
+                            <option value="1">Beginner (1)</option>
+                            <option value="2">Basic (2)</option>
+                            <option value="3">Novice (3)</option>
+                            <option value="4">Intermediate (4)</option>
+                            <option value="5">Competent (5)</option>
+                            <option value="6">Proficient (6)</option>
+                            <option value="7">Advanced (7)</option>
+                            <option value="8">Expert (8)</option>
+                            <option value="9">Master (9)</option>
+                            <option value="10">Guru (10)</option>
+                        </select>
+                    </div>
+                    
+                    <div class="flex space-x-3 pt-4">
+                        <button type="submit" 
+                                class="flex-1 bg-primary-600 text-white py-2 rounded-lg hover:bg-primary-700 transition-colors">
+                            Update Progress
+                        </button>
+                        <button type="button" 
+                                onclick="closeSkillModal()"
+                                class="flex-1 bg-gray-300 text-gray-700 py-2 rounded-lg hover:bg-gray-400 transition-colors">
+                            Cancel
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    {% else %}
+    <!-- No Progress Data -->
+    <div class="text-center py-12">
+        <div class="bg-white rounded-xl shadow-sm p-8">
+            <i class="fas fa-chart-bar text-gray-400 text-4xl mb-4"></i>
+            <h2 class="text-2xl font-bold text-gray-900 mb-4">No Progress Data Yet</h2>
+            <p class="text-gray-600 mb-6">
+                Start by analyzing a job posting to begin tracking your skill development journey.
+            </p>
+            <a href="/analyze" class="bg-primary-600 text-white px-6 py-3 rounded-lg hover:bg-primary-700 transition-colors">
+                <i class="fas fa-search mr-2"></i>
+                Analyze Your First Job
+            </a>
+        </div>
+    </div>
+    {% endif %}
+
+    <!-- Motivational Section -->
+    <div class="bg-gradient-to-r from-primary-600 to-success-600 text-white rounded-xl p-8 text-center">
+        <h2 class="text-2xl font-bold mb-4">Keep Learning, Keep Growing! 🚀</h2>
+        <p class="text-lg mb-6">
+            Every skill you improve brings you closer to your dream job. Stay consistent and celebrate small wins!
+        </p>
+        <div class="flex justify-center space-x-4">
+            <a href="/analyze" class="bg-white text-primary-600 px-6 py-3 rounded-lg font-semibold hover:bg-gray-100 transition-colors">
+                Analyze New Job
+            </a>
+            <button onclick="shareProgress()" class="bg-primary-700 text-white px-6 py-3 rounded-lg font-semibold hover:bg-primary-800 transition-colors">
+                Share Progress
+            </button>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+    // Modal management
+    function openSkillModal(skillName = '', proficiency = 5) {
+        document.getElementById('modal-skill-name').value = skillName;
+        document.getElementById('modal-proficiency').value = proficiency;
+        document.getElementById('skill-modal').classList.remove('hidden');
+    }
+
+    function closeSkillModal() {
+        document.getElementById('skill-modal').classList.add('hidden');
+    }
+
+    function updateSkill(skillName, currentProficiency) {
+        openSkillModal(skillName, currentProficiency);
+    }
+
+    // Event listeners
+    document.getElementById('add-skill-btn').addEventListener('click', () => {
+        openSkillModal();
+    });
+
+    document.getElementById('skill-update-form').addEventListener('submit', async (e) => {
+        e.preventDefault();
+        
+        const skillName = document.getElementById('modal-skill-name').value.trim();
+        const proficiency = parseInt(document.getElementById('modal-proficiency').value);
+        
+        if (!skillName) {
+            showToast('Please enter a skill name', 'error');
+            return;
+        }
+
+        try {
+            const response = await apiCall('/api/update-progress', {
+                method: 'POST',
+                body: JSON.stringify({
+                    user_id: 'demo', // In a real app, this would be the actual user ID
+                    skill_name: skillName,
+                    proficiency_level: proficiency
+                })
+            });
+
+            if (response.success) {
+                showToast('Skill progress updated successfully!', 'success');
+                closeSkillModal();
+                
+                // Reload page to show updated data
+                setTimeout(() => {
+                    window.location.reload();
+                }, 1000);
+            } else {
+                showToast('Failed to update progress', 'error');
+            }
+
+        } catch (error) {
+            showToast('Failed to update progress', 'error');
+        }
+    });
+
+    // Close modal on outside click
+    document.getElementById('skill-modal').addEventListener('click', (e) => {
+        if (e.target.id === 'skill-modal') {
+            closeSkillModal();
+        }
+    });
+
+    // Share progress function
+    function shareProgress() {
+        if (navigator.share) {
+            navigator.share({
+                title: 'My Skill Development Progress',
+                text: 'Check out my learning progress on the Skill Gap Analyzer!',
+                url: window.location.href
+            });
+        } else {
+            // Fallback: copy to clipboard
+            navigator.clipboard.writeText(window.location.href).then(() => {
+                showToast('Progress link copied to clipboard!', 'success');
+            }).catch(() => {
+                showToast('Unable to share progress', 'error');
+            });
+        }
+    }
+
+    // Animate progress bars on load
+    document.addEventListener('DOMContentLoaded', () => {
+        const progressBars = document.querySelectorAll('.bg-primary-600');
+        progressBars.forEach((bar, index) => {
+            setTimeout(() => {
+                bar.style.transform = 'scaleX(1)';
+            }, index * 100);
+        });
+    });
+</script>
+{% endblock %}

@@ -1,0 +1,26 @@
+{
+  "name": "jobswipe-monorepo",
+  "version": "1.0.0",
+  "description": "AI-powered job matching platform",
+  "private": true,
+  "workspaces": [
+    "mobile",
+    "web",
+    "backend",
+    "ai-services",
+    "shared"
+  ],
+  "scripts": {
+    "dev": "concurrently \"npm run dev:backend\" \"npm run dev:web\" \"npm run dev:mobile\"",
+    "dev:backend": "cd backend && npm run dev",
+    "dev:web": "cd web && npm run dev",
+    "dev:mobile": "cd mobile && npm start",
+    "build": "npm run build:shared && npm run build:backend && npm run build:web",
+    "build:shared": "cd shared && npm run build",
+    "build:backend": "cd backend && npm run build",
+    "build:web": "cd web && npm run build"
+  },
+  "devDependencies": {
+    "concurrently": "^8.2.2"
+  }
+}

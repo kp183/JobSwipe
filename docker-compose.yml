@@ -1,0 +1,99 @@
+version: '3.8'
+
+services:
+  # PostgreSQL Database
+  postgres:
+    image: postgres:15
+    container_name: jobswipe-postgres
+    environment:
+      POSTGRES_DB: jobswipe
+      POSTGRES_USER: jobswipe
+      POSTGRES_PASSWORD: password123
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./backend/prisma/seed.sql:/docker-entrypoint-initdb.d/seed.sql
+    networks:
+      - jobswipe-network
+
+  # Redis for caching
+  redis:
+    image: redis:7-alpine
+    container_name: jobswipe-redis
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    networks:
+      - jobswipe-network
+
+  # Backend API
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: jobswipe-backend
+    environment:
+      DATABASE_URL: postgresql://jobswipe:password123@postgres:5432/jobswipe
+      REDIS_URL: redis://redis:6379
+      JWT_SECRET: dev-jwt-secret-key
+      NODE_ENV: development
+    ports:
+      - "5000:5000"
+    depends_on:
+      - postgres
+      - redis
+    volumes:
+      - ./backend:/app
+      - /app/node_modules
+    networks:
+      - jobswipe-network
+    command: npm run dev
+
+  # AI Services
+  ai-services:
+    build:
+      context: ./ai-services
+      dockerfile: Dockerfile
+    container_name: jobswipe-ai
+    environment:
+      OPENAI_API_KEY: ${OPENAI_API_KEY}
+      NODE_ENV: development
+    ports:
+      - "5001:5001"
+    volumes:
+      - ./ai-services:/app
+      - /app/node_modules
+    networks:
+      - jobswipe-network
+    command: npm run dev
+
+  # Web Frontend
+  web:
+    build:
+      context: ./web
+      dockerfile: Dockerfile
+    container_name: jobswipe-web
+    environment:
+      NEXT_PUBLIC_API_URL: http://localhost:5000
+      NODE_ENV: development
+    ports:
+      - "3000:3000"
+    depends_on:
+      - backend
+    volumes:
+      - ./web:/app
+      - /app/node_modules
+      - /app/.next
+    networks:
+      - jobswipe-network
+    command: npm run dev
+
+volumes:
+  postgres_data:
+  redis_data:
+
+networks:
+  jobswipe-network:
+    driver: bridge

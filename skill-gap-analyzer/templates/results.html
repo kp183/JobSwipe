@@ -1,0 +1,399 @@
+{% extends "base.html" %}
+
+{% block title %}Analysis Results - Skill Gap Analyzer{% endblock %}
+
+{% block content %}
+<div class="max-w-6xl mx-auto">
+    <!-- Header -->
+    <div class="text-center mb-8">
+        <h1 class="text-3xl font-bold text-gray-900 mb-4">Your Skill Analysis Results</h1>
+        <p class="text-lg text-gray-600">
+            Detailed breakdown of your job match and personalized learning recommendations.
+        </p>
+    </div>
+
+    {% if results %}
+    <!-- Job Information -->
+    {% if results.job_analysis %}
+    <div class="bg-white rounded-xl shadow-sm p-6 mb-8">
+        <h2 class="text-xl font-semibold text-gray-900 mb-4">
+            <i class="fas fa-briefcase text-primary-600 mr-2"></i>
+            Job Details
+        </h2>
+        <div class="grid md:grid-cols-2 gap-6">
+            <div>
+                {% if results.job_analysis.company_name %}
+                <div class="mb-3">
+                    <span class="text-sm font-medium text-gray-500">Company:</span>
+                    <div class="text-gray-900">{{ results.job_analysis.company_name }}</div>
+                </div>
+                {% endif %}
+                
+                {% if results.job_analysis.position_title %}
+                <div class="mb-3">
+                    <span class="text-sm font-medium text-gray-500">Position:</span>
+                    <div class="text-gray-900">{{ results.job_analysis.position_title }}</div>
+                </div>
+                {% endif %}
+                
+                {% if results.job_analysis.experience_level %}
+                <div class="mb-3">
+                    <span class="text-sm font-medium text-gray-500">Experience Level:</span>
+                    <div class="text-gray-900 capitalize">{{ results.job_analysis.experience_level }}</div>
+                </div>
+                {% endif %}
+            </div>
+            
+            <div>
+                {% if results.job_analysis.salary_range %}
+                <div class="mb-3">
+                    <span class="text-sm font-medium text-gray-500">Salary Range:</span>
+                    <div class="text-gray-900">
+                        {% if results.job_analysis.salary_range.min_salary and results.job_analysis.salary_range.max_salary %}
+                            ₹{{ "{:,}".format(results.job_analysis.salary_range.min_salary) }} - ₹{{ "{:,}".format(results.job_analysis.salary_range.max_salary) }}
+                        {% elif results.job_analysis.salary_range.min_salary %}
+                            ₹{{ "{:,}".format(results.job_analysis.salary_range.min_salary) }}+
+                        {% else %}
+                            Not specified
+                        {% endif %}
+                    </div>
+                </div>
+                {% endif %}
+                
+                {% if results.job_analysis.technology_domains %}
+                <div class="mb-3">
+                    <span class="text-sm font-medium text-gray-500">Technology Domains:</span>
+                    <div class="flex flex-wrap gap-1 mt-1">
+                        {% for domain in results.job_analysis.technology_domains %}
+                        <span class="bg-primary-100 text-primary-800 px-2 py-1 rounded-full text-xs">{{ domain }}</span>
+                        {% endfor %}
+                    </div>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+    {% endif %}
+
+    <!-- Skill Match Overview -->
+    {% if results.skill_comparison %}
+    <div class="bg-white rounded-xl shadow-sm p-6 mb-8">
+        <h2 class="text-xl font-semibold text-gray-900 mb-6">
+            <i class="fas fa-chart-pie text-success-600 mr-2"></i>
+            Skill Match Analysis
+        </h2>
+        
+        <div class="grid md:grid-cols-3 gap-6">
+            <!-- Confidence Score -->
+            <div class="text-center">
+                <div class="skill-meter w-24 h-24 rounded-full mx-auto mb-4 flex items-center justify-center" 
+                     style="--percentage: {{ results.skill_comparison.confidence_score }}">
+                    <div class="bg-white w-16 h-16 rounded-full flex items-center justify-center">
+                        <div class="text-center">
+                            <div class="text-xl font-bold text-gray-900">{{ results.skill_comparison.confidence_score }}%</div>
+                        </div>
+                    </div>
+                </div>
+                <h3 class="font-semibold text-gray-900">Job Match</h3>
+                <p class="text-sm text-gray-600">Overall compatibility</p>
+            </div>
+            
+            <!-- Readiness Status -->
+            <div class="text-center">
+                <div class="w-24 h-24 rounded-full mx-auto mb-4 flex items-center justify-center
+                    {% if results.skill_comparison.readiness_status == 'Ready to Apply' %}bg-success-100
+                    {% elif results.skill_comparison.readiness_status == 'Almost Ready' %}bg-warning-100
+                    {% else %}bg-danger-100{% endif %}">
+                    <i class="fas fa-user-check text-2xl
+                        {% if results.skill_comparison.readiness_status == 'Ready to Apply' %}text-success-600
+                        {% elif results.skill_comparison.readiness_status == 'Almost Ready' %}text-warning-600
+                        {% else %}text-danger-600{% endif %}"></i>
+                </div>
+                <h3 class="font-semibold text-gray-900">{{ results.skill_comparison.readiness_status }}</h3>
+                <p class="text-sm text-gray-600">Current status</p>
+            </div>
+            
+            <!-- Learning Time -->
+            <div class="text-center">
+                <div class="w-24 h-24 rounded-full mx-auto mb-4 flex items-center justify-center bg-primary-100">
+                    <i class="fas fa-clock text-2xl text-primary-600"></i>
+                </div>
+                <h3 class="font-semibold text-gray-900">{{ results.skill_comparison.total_learning_time_days }} Days</h3>
+                <p class="text-sm text-gray-600">Estimated learning time</p>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+
+    <!-- Skills Breakdown -->
+    <div class="grid lg:grid-cols-2 gap-8 mb-8">
+        <!-- Matching Skills -->
+        {% if results.skill_comparison.skill_matches %}
+        <div class="bg-white rounded-xl shadow-sm p-6">
+            <h3 class="text-lg font-semibold text-gray-900 mb-4">
+                <i class="fas fa-check-circle text-success-600 mr-2"></i>
+                Skills You Have ({{ results.skill_comparison.skill_matches|length }})
+            </h3>
+            <div class="space-y-3">
+                {% for match in results.skill_comparison.skill_matches %}
+                <div class="flex items-center justify-between p-3 bg-success-50 rounded-lg">
+                    <div>
+                        <div class="font-medium text-gray-900">{{ match.skill_name }}</div>
+                        <div class="text-sm text-gray-600">
+                            Your Level: {{ match.user_proficiency }}/10 | Required: {{ match.required_proficiency }}/10
+                        </div>
+                    </div>
+                    <div class="text-success-600 font-semibold">{{ match.match_percentage }}%</div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+        {% endif %}
+
+        <!-- Missing Skills -->
+        {% if results.skill_comparison.missing_skills %}
+        <div class="bg-white rounded-xl shadow-sm p-6">
+            <h3 class="text-lg font-semibold text-gray-900 mb-4">
+                <i class="fas fa-exclamation-triangle text-warning-600 mr-2"></i>
+                Skills to Develop ({{ results.skill_comparison.missing_skills|length }})
+            </h3>
+            <div class="space-y-3">
+                {% for skill in results.skill_comparison.missing_skills %}
+                <div class="p-3 border border-gray-200 rounded-lg">
+                    <div class="flex items-center justify-between mb-2">
+                        <div class="font-medium text-gray-900">{{ skill.skill_name }}</div>
+                        <span class="px-2 py-1 rounded-full text-xs font-medium
+                            {% if skill.priority == 'critical' %}bg-danger-100 text-danger-800
+                            {% elif skill.priority == 'important' %}bg-warning-100 text-warning-800
+                            {% else %}bg-gray-100 text-gray-800{% endif %}">
+                            {{ skill.priority|title }}
+                        </span>
+                    </div>
+                    <div class="text-sm text-gray-600">
+                        Gap: {{ skill.proficiency_gap }}/10 • Est. Time: {{ skill.learning_time_days }} days
+                    </div>
+                    <div class="mt-2">
+                        <div class="w-full bg-gray-200 rounded-full h-2">
+                            <div class="bg-primary-600 h-2 rounded-full" 
+                                 style="width: {{ (skill.current_proficiency / skill.required_proficiency * 100)|round }}%"></div>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+        {% endif %}
+    </div>
+
+    <!-- Learning Path -->
+    {% if results.learning_path and results.learning_path.milestones %}
+    <div class="bg-white rounded-xl shadow-sm p-6 mb-8">
+        <h2 class="text-xl font-semibold text-gray-900 mb-6">
+            <i class="fas fa-road text-primary-600 mr-2"></i>
+            Your Personalized Learning Path
+        </h2>
+        
+        <!-- Path Overview -->
+        <div class="bg-gradient-to-r from-primary-50 to-success-50 rounded-lg p-4 mb-6">
+            <div class="grid md:grid-cols-3 gap-4 text-center">
+                <div>
+                    <div class="text-2xl font-bold text-primary-600">{{ results.learning_path.total_duration_days }}</div>
+                    <div class="text-sm text-gray-600">Total Days</div>
+                </div>
+                <div>
+                    <div class="text-2xl font-bold text-success-600">{{ results.learning_path.milestones|length }}</div>
+                    <div class="text-sm text-gray-600">Learning Milestones</div>
+                </div>
+                <div>
+                    <div class="text-2xl font-bold text-warning-600">{{ results.learning_path.estimated_completion_date }}</div>
+                    <div class="text-sm text-gray-600">Target Completion</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Milestones -->
+        <div class="space-y-6">
+            {% for milestone in results.learning_path.milestones %}
+            <div class="border border-gray-200 rounded-lg p-6">
+                <div class="flex items-start space-x-4">
+                    <div class="bg-primary-600 text-white w-10 h-10 rounded-full flex items-center justify-center font-bold">
+                        {{ loop.index }}
+                    </div>
+                    <div class="flex-1">
+                        <div class="flex items-center justify-between mb-3">
+                            <h3 class="text-lg font-semibold text-gray-900">{{ milestone.skill_name }}</h3>
+                            <span class="text-sm text-gray-500">{{ milestone.duration_days }} days</span>
+                        </div>
+                        
+                        <div class="text-sm text-gray-600 mb-4">
+                            <i class="fas fa-calendar mr-1"></i>
+                            {{ milestone.start_date }} to {{ milestone.end_date }}
+                        </div>
+
+                        <!-- Learning Objectives -->
+                        {% if milestone.learning_objectives %}
+                        <div class="mb-4">
+                            <h4 class="font-medium text-gray-900 mb-2">Learning Objectives:</h4>
+                            <ul class="text-sm text-gray-600 space-y-1">
+                                {% for objective in milestone.learning_objectives %}
+                                <li class="flex items-start">
+                                    <i class="fas fa-check text-success-500 mr-2 mt-0.5 text-xs"></i>
+                                    {{ objective }}
+                                </li>
+                                {% endfor %}
+                            </ul>
+                        </div>
+                        {% endif %}
+
+                        <!-- Course Recommendations -->
+                        {% if milestone.courses %}
+                        <div>
+                            <h4 class="font-medium text-gray-900 mb-3">Recommended Courses:</h4>
+                            <div class="grid gap-3">
+                                {% for course in milestone.courses[:3] %}
+                                <div class="border border-gray-200 rounded-lg p-4 hover:shadow-md transition-shadow">
+                                    <div class="flex items-center justify-between">
+                                        <div class="flex-1">
+                                            <h5 class="font-medium text-gray-900 mb-1">{{ course.title }}</h5>
+                                            <div class="text-sm text-gray-600 mb-2">
+                                                <span class="mr-3">{{ course.provider }}</span>
+                                                <span class="mr-3">{{ course.duration }}</span>
+                                                <span class="text-yellow-500">
+                                                    {% for i in range(course.rating|round|int) %}★{% endfor %}
+                                                    {{ course.rating }}
+                                                </span>
+                                            </div>
+                                            <div class="flex items-center space-x-2">
+                                                {% if course.is_free %}
+                                                <span class="bg-success-100 text-success-800 px-2 py-1 rounded-full text-xs font-medium">
+                                                    Free
+                                                </span>
+                                                {% else %}
+                                                <span class="text-gray-900 font-medium">₹{{ "{:,}".format(course.price_inr) }}</span>
+                                                {% endif %}
+                                                <span class="text-gray-500 text-xs">{{ course.language }}</span>
+                                            </div>
+                                        </div>
+                                        <div class="ml-4">
+                                            <a href="{{ course.url }}" 
+                                               target="_blank" 
+                                               class="bg-primary-600 text-white px-4 py-2 rounded-lg text-sm hover:bg-primary-700 transition-colors">
+                                                View Course
+                                            </a>
+                                        </div>
+                                    </div>
+                                </div>
+                                {% endfor %}
+                            </div>
+                        </div>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+    {% endif %}
+
+    <!-- Confidence Projection -->
+    {% if results.learning_path.confidence_projection %}
+    <div class="bg-white rounded-xl shadow-sm p-6 mb-8">
+        <h2 class="text-xl font-semibold text-gray-900 mb-6">
+            <i class="fas fa-chart-line text-success-600 mr-2"></i>
+            Confidence Projection
+        </h2>
+        <div class="text-center text-gray-600 mb-4">
+            Track how your job readiness will improve as you complete the learning path
+        </div>
+        
+        <!-- Simple progress visualization -->
+        <div class="flex items-end justify-between h-32 bg-gray-50 rounded-lg p-4">
+            {% for week, confidence in results.learning_path.confidence_projection.items() %}
+            <div class="flex flex-col items-center">
+                <div class="bg-primary-600 rounded-t" 
+                     style="height: {{ confidence }}px; width: 20px; max-height: 100px;"></div>
+                <div class="text-xs text-gray-600 mt-2">{{ week.replace('_', ' ').title() }}</div>
+                <div class="text-xs font-medium text-gray-900">{{ confidence }}%</div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+    {% endif %}
+
+    <!-- Actions -->
+    <div class="text-center py-8">
+        <div class="space-x-4">
+            <button onclick="window.print()" 
+                    class="bg-gray-600 text-white px-6 py-3 rounded-lg hover:bg-gray-700 transition-colors">
+                <i class="fas fa-download mr-2"></i>
+                Save as PDF
+            </button>
+            <a href="/analyze" 
+               class="bg-primary-600 text-white px-6 py-3 rounded-lg hover:bg-primary-700 transition-colors">
+                <i class="fas fa-plus mr-2"></i>
+                Analyze Another Job
+            </a>
+            <a href="/progress/demo" 
+               class="bg-success-600 text-white px-6 py-3 rounded-lg hover:bg-success-700 transition-colors">
+                <i class="fas fa-chart-bar mr-2"></i>
+                Track Progress
+            </a>
+        </div>
+    </div>
+
+    {% else %}
+    <!-- No Results -->
+    <div class="text-center py-12">
+        <div class="bg-white rounded-xl shadow-sm p-8">
+            <i class="fas fa-exclamation-triangle text-warning-500 text-4xl mb-4"></i>
+            <h2 class="text-2xl font-bold text-gray-900 mb-4">No Results Found</h2>
+            <p class="text-gray-600 mb-6">
+                The analysis results could not be loaded. This might be due to an expired link or missing data.
+            </p>
+            <a href="/analyze" class="bg-primary-600 text-white px-6 py-3 rounded-lg hover:bg-primary-700 transition-colors">
+                <i class="fas fa-search mr-2"></i>
+                Start New Analysis
+            </a>
+        </div>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+    // Print styling
+    window.addEventListener('beforeprint', () => {
+        document.body.classList.add('print-mode');
+    });
+
+    window.addEventListener('afterprint', () => {
+        document.body.classList.remove('print-mode');
+    });
+
+    // Add print styles
+    const printStyles = `
+        @media print {
+            .print-mode nav,
+            .print-mode footer,
+            .print-mode button,
+            .print-mode a[href="/analyze"],
+            .print-mode a[href="/progress/demo"] {
+                display: none !important;
+            }
+            
+            .print-mode {
+                background: white !important;
+            }
+            
+            .print-mode .bg-gray-50 {
+                background: white !important;
+            }
+        }
+    `;
+    
+    const styleSheet = document.createElement('style');
+    styleSheet.textContent = printStyles;
+    document.head.appendChild(styleSheet);
+</script>
+{% endblock %}
