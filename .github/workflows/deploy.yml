@@ -15,40 +15,23 @@ concurrency:
   cancel-in-progress: false
 
 jobs:
-  build-and-deploy:
+  deploy:
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: '18'
-          cache: 'npm'
-          cache-dependency-path: web/package-lock.json
-
       - name: Setup Pages
         uses: actions/configure-pages@v4
-
-      - name: Install dependencies
-        run: |
-          cd web
-          npm ci
-
-      - name: Build Next.js application
-        run: |
-          cd web
-          npm run build
-
-      - name: Create .nojekyll file
-        run: |
-          touch web/out/.nojekyll
 
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
-          path: ./web/out
+          # Upload the root directory which now contains index.html and _next folder
+          path: '.'
 
       - name: Deploy to GitHub Pages
         id: deployment
