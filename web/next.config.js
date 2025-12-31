@@ -3,12 +3,12 @@ const nextConfig = {
   reactStrictMode: true,
   output: 'export',
   trailingSlash: true,
-  basePath: process.env.NEXT_PUBLIC_BASE_PATH || '',
-  assetPrefix: process.env.NEXT_PUBLIC_BASE_PATH || '',
   images: {
     unoptimized: true,
     domains: ['via.placeholder.com'],
   },
+  assetPrefix: process.env.NODE_ENV === 'production' ? '/JobSwipe' : '',
+  basePath: process.env.NODE_ENV === 'production' ? '/JobSwipe' : '',
 }
 
 module.exports = nextConfig

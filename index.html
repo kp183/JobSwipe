@@ -25,10 +25,6 @@
             text-align: center;
             max-width: 800px;
             padding: 2rem;
-            background: rgba(255, 255, 255, 0.1);
-            backdrop-filter: blur(10px);
-            border-radius: 20px;
-            border: 1px solid rgba(255, 255, 255, 0.2);
         }
         
         .logo {
@@ -62,12 +58,7 @@
             background: rgba(255, 255, 255, 0.1);
             padding: 1rem;
             border-radius: 10px;
-            border: 1px solid rgba(255, 255, 255, 0.1);
-        }
-        
-        .feature-icon {
-            font-size: 2rem;
-            margin-bottom: 0.5rem;
+            backdrop-filter: blur(10px);
         }
         
         .cta-button {
@@ -75,139 +66,100 @@
             background: linear-gradient(45deg, #ff6b6b, #ee5a24);
             color: white;
             padding: 1rem 2rem;
-            border-radius: 50px;
             text-decoration: none;
+            border-radius: 50px;
             font-weight: bold;
             font-size: 1.1rem;
             margin: 1rem;
             transition: transform 0.3s ease;
-            border: none;
-            cursor: pointer;
         }
         
         .cta-button:hover {
             transform: translateY(-2px);
-            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
         }
         
         .status {
-            margin-top: 2rem;
-            padding: 1rem;
             background: rgba(255, 255, 255, 0.1);
+            padding: 1rem;
             border-radius: 10px;
-            border-left: 4px solid #4CAF50;
+            margin-top: 2rem;
+            backdrop-filter: blur(10px);
         }
         
-        .github-link {
-            color: #fff;
-            text-decoration: none;
-            opacity: 0.8;
-            transition: opacity 0.3s ease;
+        .loading {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid rgba(255,255,255,.3);
+            border-radius: 50%;
+            border-top-color: #fff;
+            animation: spin 1s ease-in-out infinite;
+            margin-right: 10px;
         }
         
-        .github-link:hover {
-            opacity: 1;
-        }
-        
-        @keyframes pulse {
-            0% { transform: scale(1); }
-            50% { transform: scale(1.05); }
-            100% { transform: scale(1); }
-        }
-        
-        .pulse {
-            animation: pulse 2s infinite;
+        @keyframes spin {
+            to { transform: rotate(360deg); }
         }
     </style>
 </head>
 <body>
     <div class="container">
-        <div class="logo pulse">💼❤️</div>
+        <div class="logo">🚀</div>
         <h1>JobSwipe AI</h1>
         <p class="subtitle">India's First AI-Powered Job Discovery Platform with Tinder-Style Swiping</p>
         
         <div class="features">
             <div class="feature">
-                <div class="feature-icon">🎯</div>
-                <h3>Tinder-Style Swiping</h3>
-                <p>Swipe right to apply, left to pass</p>
+                <h3>🎯 Smart Swiping</h3>
+                <p>Tinder-style job discovery with AI matching</p>
             </div>
             <div class="feature">
-                <div class="feature-icon">🤖</div>
-                <h3>AI Match Reports</h3>
-                <p>Real-time skill gap analysis</p>
+                <h3>🤖 AI Reports</h3>
+                <p>Real-time skill gap analysis & learning paths</p>
             </div>
             <div class="feature">
-                <div class="feature-icon">🔄</div>
-                <h3>Rewind Engine</h3>
-                <p>3 daily credits to undo swipes</p>
+                <h3>👥 Expert Mentors</h3>
+                <p>Connect with professionals from Google, Zomato, CRED</p>
             </div>
             <div class="feature">
-                <div class="feature-icon">👥</div>
-                <h3>Expert Mentors</h3>
-                <p>Connect with FAANG professionals</p>
+                <h3>📊 Live Tracking</h3>
+                <p>Monitor applications & match score improvements</p>
             </div>
-        </div>
-        
-        <div style="margin: 2rem 0;">
-            <button class="cta-button" onclick="launchApp()">
-                🚀 Launch JobSwipe AI
-            </button>
-            <br>
-            <a href="https://github.com/kp183/JobSwipe" class="github-link" target="_blank">
-                📱 View Source Code on GitHub
-            </a>
         </div>
         
         <div class="status">
-            <h3>🎉 Deployment Status: LIVE</h3>
-            <p>✅ Next.js Web Application: Ready</p>
-            <p>✅ AI Skill Gap Analyzer: Ready</p>
-            <p>✅ All Features: Functional</p>
-            <p><strong>Target Market:</strong> 150M Indian Job Seekers</p>
+            <div class="loading"></div>
+            <strong>Deploying Full Application...</strong>
+            <p>The complete JobSwipe AI platform is being deployed via GitHub Actions.</p>
+            <p>This includes job swiping, AI match reports, mentors marketplace, and progress tracking.</p>
         </div>
         
-        <div style="margin-top: 2rem; opacity: 0.7; font-size: 0.9rem;">
-            <p>🇮🇳 Made for India • INR Pricing • Hindi/English Support</p>
-            <p>Featuring companies: Google, Zomato, Swiggy, CRED</p>
+        <a href="https://github.com/kp183/JobSwipe" class="cta-button">
+            📱 View Source Code
+        </a>
+        
+        <div style="margin-top: 2rem; opacity: 0.8;">
+            <p><strong>🇮🇳 Made for India</strong> • INR Pricing • Hindi/English Support</p>
+            <p>Transforming job hunting for 150M Indian job seekers</p>
         </div>
     </div>
 
     <script>
-        function launchApp() {
-            // For now, redirect to GitHub since the full app is being deployed
-            alert('🚀 JobSwipe AI is deploying! \n\nFull web application will be available at:\nhttps://kp183.github.io/JobSwipe\n\nMeanwhile, check out the source code!');
-            window.open('https://github.com/kp183/JobSwipe', '_blank');
-        }
+        // Auto-refresh every 30 seconds to check if deployment is complete
+        setTimeout(() => {
+            window.location.reload();
+        }, 30000);
         
-        // Add some interactive elements
-        document.addEventListener('DOMContentLoaded', function() {
-            const features = document.querySelectorAll('.feature');
-            features.forEach((feature, index) => {
-                feature.style.animationDelay = `${index * 0.2}s`;
-                feature.style.animation = 'fadeInUp 0.6s ease forwards';
+        // Check if the full app is deployed
+        fetch('./web/index.html')
+            .then(response => {
+                if (response.ok) {
+                    window.location.href = './web/';
+                }
+            })
+            .catch(() => {
+                // Full app not ready yet, keep showing this page
             });
-        });
-        
-        // Add CSS for fadeInUp animation
-        const style = document.createElement('style');
-        style.textContent = `
-            @keyframes fadeInUp {
-                from {
-                    opacity: 0;
-                    transform: translateY(30px);
-                }
-                to {
-                    opacity: 1;
-                    transform: translateY(0);
-                }
-            }
-            
-            .feature {
-                opacity: 0;
-            }
-        `;
-        document.head.appendChild(style);
     </script>
 </body>
 </html>
