@@ -7,8 +7,8 @@ const nextConfig = {
     unoptimized: true,
     domains: ['via.placeholder.com'],
   },
-  assetPrefix: process.env.NODE_ENV === 'production' ? '/JobSwipe' : '',
-  basePath: process.env.NODE_ENV === 'production' ? '/JobSwipe' : '',
+  // Remove basePath and assetPrefix for GitHub Pages
+  // GitHub Pages will serve from the root of the deployed site
 }
 
 module.exports = nextConfig
