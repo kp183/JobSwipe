@@ -124,4 +124,3 @@ web-build/
 # Temporary files
 *.tmp
 *.temp
-node_modules

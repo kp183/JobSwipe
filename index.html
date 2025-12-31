@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>JobSwipe AI - Revolutionary Job Matching Platform</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap');
+        body { font-family: 'Plus Jakarta Sans', sans-serif; }
+        .gradient-bg { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); }
+        .glass { backdrop-filter: blur(10px); background: rgba(255, 255, 255, 0.1); }
+    </style>
+</head>
+<body class="bg-gray-50">
+    <!-- Hero Section -->
+    <div class="gradient-bg min-h-screen flex items-center justify-center text-white">
+        <div class="text-center max-w-4xl mx-auto px-6">
+            <h1 class="text-5xl md:text-7xl font-bold mb-6">
+                JobSwipe AI
+            </h1>
+            <p class="text-xl md:text-2xl mb-8 opacity-90">
+                🇮🇳 India's First AI-Powered Job Discovery Platform with Tinder-Style Swiping
+            </p>
+            <div class="flex flex-col md:flex-row gap-4 justify-center mb-12">
+                <button onclick="showDemo()" class="bg-white text-purple-600 px-8 py-4 rounded-full font-semibold text-lg hover:bg-gray-100 transition-all transform hover:scale-105">
+                    🚀 Try Live Demo
+                </button>
+                <a href="https://github.com/kp183/JobSwipe" target="_blank" class="glass border border-white/30 px-8 py-4 rounded-full font-semibold text-lg hover:bg-white/20 transition-all">
+                    📱 View Source Code
+                </a>
+            </div>
+            
+            <!-- Key Features -->
+            <div class="grid md:grid-cols-3 gap-6 mt-16">
+                <div class="glass p-6 rounded-2xl border border-white/20">
+                    <div class="text-4xl mb-4">🎯</div>
+                    <h3 class="text-xl font-semibold mb-2">Tinder-Style Swiping</h3>
+                    <p class="opacity-80">Swipe right to apply, left to pass. 90% faster than traditional job boards.</p>
+                </div>
+                <div class="glass p-6 rounded-2xl border border-white/20">
+                    <div class="text-4xl mb-4">🤖</div>
+                    <h3 class="text-xl font-semibold mb-2">AI Match Reports</h3>
+                    <p class="opacity-80">Real-time skill gap analysis with personalized learning roadmaps.</p>
+                </div>
+                <div class="glass p-6 rounded-2xl border border-white/20">
+                    <div class="text-4xl mb-4">👥</div>
+                    <h3 class="text-xl font-semibold mb-2">Expert Mentors</h3>
+                    <p class="opacity-80">Connect with verified professionals from Google, Zomato, Swiggy, CRED.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Demo Section -->
+    <div id="demoSection" class="hidden min-h-screen bg-white p-8">
+        <div class="max-w-6xl mx-auto">
+            <div class="text-center mb-12">
+                <h2 class="text-4xl font-bold text-gray-900 mb-4">JobSwipe AI Demo</h2>
+                <p class="text-xl text-gray-600">Experience the future of job hunting</p>
+            </div>
+
+            <!-- Mock Job Card -->
+            <div class="max-w-md mx-auto">
+                <div id="jobCard" class="bg-white rounded-2xl shadow-2xl p-6 border transform transition-all duration-300">
+                    <div class="flex items-center justify-between mb-4">
+                        <div class="flex items-center space-x-3">
+                            <div class="w-12 h-12 bg-blue-500 rounded-full flex items-center justify-center text-white font-bold">G</div>
+                            <div>
+                                <h3 class="font-semibold text-gray-900">Google</h3>
+                                <p class="text-sm text-gray-500">Bangalore, India</p>
+                            </div>
+                        </div>
+                        <div class="bg-green-100 text-green-800 px-3 py-1 rounded-full text-sm font-medium">
+                            87% Match
+                        </div>
+                    </div>
+                    
+                    <h2 class="text-2xl font-bold text-gray-900 mb-2">Senior Full Stack Developer</h2>
+                    <p class="text-gray-600 mb-4">₹25,00,000 - ₹35,00,000 per year</p>
+                    
+                    <div class="flex flex-wrap gap-2 mb-6">
+                        <span class="bg-blue-100 text-blue-800 px-3 py-1 rounded-full text-sm">React</span>
+                        <span class="bg-green-100 text-green-800 px-3 py-1 rounded-full text-sm">Node.js</span>
+                        <span class="bg-purple-100 text-purple-800 px-3 py-1 rounded-full text-sm">TypeScript</span>
+                        <span class="bg-yellow-100 text-yellow-800 px-3 py-1 rounded-full text-sm">AWS</span>
+                    </div>
+
+                    <button onclick="showAIReport()" class="w-full bg-gradient-to-r from-purple-500 to-pink-500 text-white py-3 rounded-full font-semibold mb-4 hover:from-purple-600 hover:to-pink-600 transition-all">
+                        🤖 View AI Match Report
+                    </button>
+                </div>
+
+                <!-- Swipe Actions -->
+                <div class="flex justify-center space-x-6 mt-8">
+                    <button onclick="swipeLeft()" class="w-16 h-16 bg-red-500 rounded-full flex items-center justify-center text-white text-2xl hover:bg-red-600 transition-all transform hover:scale-110">
+                        ✕
+                    </button>
+                    <button onclick="rewind()" class="w-12 h-12 bg-yellow-500 rounded-full flex items-center justify-center text-white relative hover:bg-yellow-600 transition-all">
+                        ↶
+                        <span class="absolute -top-2 -right-2 w-6 h-6 bg-purple-600 text-white text-xs rounded-full flex items-center justify-center">3</span>
+                    </button>
+                    <button onclick="swipeRight()" class="w-16 h-16 bg-green-500 rounded-full flex items-center justify-center text-white text-2xl hover:bg-green-600 transition-all transform hover:scale-110">
+                        ♥
+                    </button>
+                </div>
+            </div>
+
+            <!-- Stats -->
+            <div class="grid md:grid-cols-4 gap-6 mt-16">
+                <div class="text-center">
+                    <div class="text-3xl font-bold text-purple-600">150M+</div>
+                    <div class="text-gray-600">Indian Job Seekers</div>
+                </div>
+                <div class="text-center">
+                    <div class="text-3xl font-bold text-green-600">90%</div>
+                    <div class="text-gray-600">Time Saved</div>
+                </div>
+                <div class="text-center">
+                    <div class="text-3xl font-bold text-blue-600">5x</div>
+                    <div class="text-gray-600">Better Match Rate</div>
+                </div>
+                <div class="text-center">
+                    <div class="text-3xl font-bold text-yellow-600">₹35K</div>
+                    <div class="text-gray-600">Average Savings</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- AI Report Modal -->
+    <div id="aiModal" class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
+        <div class="bg-white rounded-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto">
+            <div class="p-6">
+                <div class="flex justify-between items-center mb-6">
+                    <h3 class="text-2xl font-bold text-gray-900">🤖 AI Match Report</h3>
+                    <button onclick="closeModal()" class="text-gray-500 hover:text-gray-700">✕</button>
+                </div>
+                
+                <div class="space-y-6">
+                    <div class="text-center">
+                        <div class="w-32 h-32 mx-auto relative">
+                            <svg class="w-32 h-32 transform -rotate-90">
+                                <circle cx="64" cy="64" r="56" stroke="#e5e7eb" stroke-width="8" fill="transparent"/>
+                                <circle cx="64" cy="64" r="56" stroke="#10b981" stroke-width="8" fill="transparent" 
+                                        stroke-dasharray="307" stroke-dashoffset="40" class="transition-all duration-1000"/>
+                            </svg>
+                            <div class="absolute inset-0 flex items-center justify-center">
+                                <div class="text-center">
+                                    <div class="text-3xl font-bold text-gray-900">87%</div>
+                                    <div class="text-sm text-gray-500">Match</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="bg-green-50 p-4 rounded-lg border-l-4 border-green-500">
+                        <h4 class="font-semibold text-green-900">✅ You can complete this in time!</h4>
+                        <p class="text-sm text-green-700 mt-1">25 hours of learning needed • 23 days until deadline</p>
+                    </div>
+
+                    <div class="space-y-4">
+                        <h4 class="font-semibold text-gray-900">Skill Gaps to Address:</h4>
+                        
+                        <div class="border rounded-lg p-4">
+                            <div class="flex justify-between items-center mb-2">
+                                <span class="font-medium">React Native</span>
+                                <span class="bg-red-100 text-red-800 px-2 py-1 rounded-full text-xs">Critical</span>
+                            </div>
+                            <div class="w-full bg-gray-200 rounded-full h-2 mb-2">
+                                <div class="bg-red-500 h-2 rounded-full" style="width: 0%"></div>
+                            </div>
+                            <p class="text-sm text-gray-600">Current: 0/10 • Required: 7/10 • Study: 25 hours</p>
+                        </div>
+
+                        <div class="border rounded-lg p-4">
+                            <div class="flex justify-between items-center mb-2">
+                                <span class="font-medium">TypeScript</span>
+                                <span class="bg-yellow-100 text-yellow-800 px-2 py-1 rounded-full text-xs">Important</span>
+                            </div>
+                            <div class="w-full bg-gray-200 rounded-full h-2 mb-2">
+                                <div class="bg-yellow-500 h-2 rounded-full" style="width: 50%"></div>
+                            </div>
+                            <p class="text-sm text-gray-600">Current: 4/10 • Required: 8/10 • Study: 15 hours</p>
+                        </div>
+                    </div>
+
+                    <div class="bg-gradient-to-r from-purple-500 to-pink-500 text-white p-6 rounded-lg">
+                        <h4 class="font-semibold mb-2">🎯 Success Prediction</h4>
+                        <p class="text-sm opacity-90 mb-4">Following this roadmap will increase your match to 94%, putting you in the top 10% of candidates.</p>
+                        <button class="bg-white text-purple-600 px-4 py-2 rounded-lg font-medium">Start Learning Plan</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function showDemo() {
+            document.getElementById('demoSection').classList.remove('hidden');
+            document.getElementById('demoSection').scrollIntoView({ behavior: 'smooth' });
+        }
+
+        function showAIReport() {
+            document.getElementById('aiModal').classList.remove('hidden');
+        }
+
+        function closeModal() {
+            document.getElementById('aiModal').classList.add('hidden');
+        }
+
+        function swipeLeft() {
+            const card = document.getElementById('jobCard');
+            card.style.transform = 'translateX(-100%) rotate(-30deg)';
+            card.style.opacity = '0';
+            setTimeout(() => {
+                card.style.transform = 'translateX(0) rotate(0)';
+                card.style.opacity = '1';
+                showToast('Job passed! Keep swiping!');
+            }, 300);
+        }
+
+        function swipeRight() {
+            const card = document.getElementById('jobCard');
+            card.style.transform = 'translateX(100%) rotate(30deg)';
+            card.style.opacity = '0';
+            setTimeout(() => {
+                card.style.transform = 'translateX(0) rotate(0)';
+                card.style.opacity = '1';
+                showToast('🎉 Application submitted! AI generated your resume.');
+            }, 300);
+        }
+
+        function rewind() {
+            showToast('🔄 Job brought back! 2 rewinds left today.');
+        }
+
+        function showToast(message) {
+            const toast = document.createElement('div');
+            toast.className = 'fixed top-4 right-4 bg-green-500 text-white px-6 py-3 rounded-lg shadow-lg z-50';
+            toast.textContent = message;
+            document.body.appendChild(toast);
+            setTimeout(() => {
+                toast.remove();
+            }, 3000);
+        }
+
+        // Keyboard shortcuts
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'ArrowLeft') swipeLeft();
+            if (e.key === 'ArrowRight') swipeRight();
+        });
+    </script>
+</body>
+</html>
