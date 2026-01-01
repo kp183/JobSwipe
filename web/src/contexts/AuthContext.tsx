@@ -21,44 +21,32 @@ interface AuthContextType {
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export function AuthProvider({ children }: { children: ReactNode }) {
-  const [user, setUser] = useState<User | null>(null);
-  const [isLoading, setIsLoading] = useState(true);
+  // For static deployment, immediately set a mock user and no loading
+  const mockUser: User = {
+    id: '1',
+    name: 'Demo User',
+    email: 'demo@jobswipe.ai',
+    provider: 'demo',
+    avatar: 'https://via.placeholder.com/32x32/6366f1/ffffff?text=U',
+    hasCompletedOnboarding: true,
+    profile: {}
+  };
 
-  useEffect(() => {
-    // Check for existing user session
-    const checkAuth = () => {
-      try {
-        const userData = localStorage.getItem('jobswipe-user');
-        if (userData) {
-          setUser(JSON.parse(userData));
-        }
-      } catch (error) {
-        console.error('Error parsing user data:', error);
-        localStorage.removeItem('jobswipe-user');
-      } finally {
-        setIsLoading(false);
-      }
-    };
-
-    checkAuth();
-  }, []);
+  const [user, setUser] = useState<User | null>(mockUser);
+  const [isLoading, setIsLoading] = useState(false); // No loading for static deployment
 
   const login = (userData: User) => {
     setUser(userData);
-    localStorage.setItem('jobswipe-user', JSON.stringify(userData));
   };
 
   const logout = () => {
-    setUser(null);
-    localStorage.removeItem('jobswipe-user');
-    window.location.href = '/login';
+    setUser(mockUser); // Keep mock user instead of null
   };
 
   const updateProfile = (profileData: any) => {
     if (user) {
       const updatedUser = { ...user, profile: profileData };
       setUser(updatedUser);
-      localStorage.setItem('jobswipe-user', JSON.stringify(updatedUser));
     }
   };
 

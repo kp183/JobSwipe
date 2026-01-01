@@ -47,7 +47,7 @@ interface AppliedJob {
 export default function Home() {
   const [jobs, setJobs] = useState<Job[]>([]);
   const [currentJobIndex, setCurrentJobIndex] = useState(0);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false); // Set to false for static deployment
   const [swipeDirection, setSwipeDirection] = useState<'left' | 'right' | null>(null);
   const [toast, setToast] = useState<{ message: string; type: 'success' | 'error' } | null>(null);
   
@@ -60,7 +60,7 @@ export default function Home() {
   const [selectedJobForReport, setSelectedJobForReport] = useState<Job | null>(null);
 
   useEffect(() => {
-    // Use mock data for static deployment
+    // Use mock data for static deployment - set immediately
     const mockJobs = [
       {
         id: '1',
@@ -164,9 +164,10 @@ export default function Home() {
       }
     ];
 
+    // Set data immediately for static deployment
     setJobs(mockJobs);
     setAppliedJobs(mockAppliedJobs);
-    setLoading(false);
+    // No need to set loading to false since it starts as false
   }, []);
 
   // Keyboard shortcuts for testing
