@@ -11,8 +11,11 @@ export default function ProtectedRoute({ children, requireOnboarding = true }: P
   const { user, isLoading } = useAuth();
   const router = useRouter();
 
+  // DEMO MODE: Skip authentication for static deployment
+  const isDemoMode = typeof window !== 'undefined' && !localStorage.getItem('jobswipe-user');
+
   useEffect(() => {
-    if (!isLoading) {
+    if (!isLoading && !isDemoMode) {
       if (!user) {
         // Not logged in, redirect to login
         router.push('/login');
@@ -21,7 +24,12 @@ export default function ProtectedRoute({ children, requireOnboarding = true }: P
         router.push('/onboarding');
       }
     }
-  }, [user, isLoading, router, requireOnboarding]);
+  }, [user, isLoading, router, requireOnboarding, isDemoMode]);
+
+  // Skip loading screen in demo mode
+  if (isDemoMode) {
+    return <>{children}</>;
+  }
 
   // Show loading spinner while checking auth
   if (isLoading) {

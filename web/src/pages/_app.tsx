@@ -12,10 +12,19 @@ export default function App({ Component, pageProps }: AppProps) {
   const router = useRouter()
   const isPublicPage = publicPages.includes(router.pathname)
 
+  // DEMO MODE: Skip authentication for static deployment
+  const isDemoMode = typeof window !== 'undefined' && process.env.NODE_ENV === 'production'
+
   return (
     <AuthProvider>
-      {isPublicPage ? (
-        <Component {...pageProps} />
+      {isPublicPage || isDemoMode ? (
+        isDemoMode && !isPublicPage ? (
+          <Layout>
+            <Component {...pageProps} />
+          </Layout>
+        ) : (
+          <Component {...pageProps} />
+        )
       ) : (
         <ProtectedRoute>
           <Layout>
