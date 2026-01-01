@@ -60,7 +60,113 @@ export default function Home() {
   const [selectedJobForReport, setSelectedJobForReport] = useState<Job | null>(null);
 
   useEffect(() => {
-    loadJobs();
+    // Use mock data for static deployment
+    const mockJobs = [
+      {
+        id: '1',
+        title: 'Senior Full Stack Developer',
+        company: {
+          name: 'Microsoft',
+          logo: 'https://via.placeholder.com/48x48/0078d4/ffffff?text=M'
+        },
+        location: 'Bangalore, India',
+        remote: true,
+        type: 'Full-time',
+        salaryMin: 2500000,
+        salaryMax: 3500000,
+        currency: 'INR',
+        skills: ['React', 'TypeScript', 'Node.js', 'React Native', 'AWS'],
+        description: 'Join Microsoft\'s innovative team building next-generation cloud solutions. Work on cutting-edge projects with React, TypeScript, and Azure technologies.',
+        requirements: ['5+ years React experience', 'TypeScript expertise', 'Node.js backend experience'],
+        matchScore: 67,
+        deadline: '2024-02-15'
+      },
+      {
+        id: '2',
+        title: 'Senior React Developer',
+        company: {
+          name: 'Google',
+          logo: 'https://via.placeholder.com/48x48/4285f4/ffffff?text=G'
+        },
+        location: 'Hyderabad, India',
+        remote: false,
+        type: 'Full-time',
+        salaryMin: 3000000,
+        salaryMax: 4500000,
+        currency: 'INR',
+        skills: ['React', 'JavaScript', 'GraphQL', 'Material-UI', 'Firebase'],
+        description: 'Build user-facing features for Google\'s next-generation products. Work with cutting-edge technologies and impact billions of users.',
+        requirements: ['Expert React skills', 'GraphQL experience', 'Material Design knowledge'],
+        matchScore: 89,
+        deadline: '2024-02-20'
+      },
+      {
+        id: '3',
+        title: 'Full Stack Engineer',
+        company: {
+          name: 'Zomato',
+          logo: 'https://via.placeholder.com/48x48/e23744/ffffff?text=Z'
+        },
+        location: 'Mumbai, India',
+        remote: true,
+        type: 'Full-time',
+        salaryMin: 1800000,
+        salaryMax: 2800000,
+        currency: 'INR',
+        skills: ['React', 'Node.js', 'MongoDB', 'Express', 'Redis'],
+        description: 'Help build India\'s largest food delivery platform. Work on high-scale systems serving millions of users daily.',
+        requirements: ['Full-stack experience', 'Database design', 'High-scale systems'],
+        matchScore: 76,
+        deadline: '2024-02-10'
+      }
+    ];
+
+    // Mock applied jobs
+    const mockAppliedJobs = [
+      {
+        id: '4',
+        title: 'Frontend Developer',
+        company: 'Swiggy',
+        appliedAt: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000).toISOString(),
+        matchStrength: 94,
+        status: 'interview' as const,
+        skillGapTasks: {
+          completed: 3,
+          total: 5
+        },
+        estimatedResponse: '2 days'
+      },
+      {
+        id: '5',
+        title: 'Backend Engineer',
+        company: 'CRED',
+        appliedAt: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString(),
+        matchStrength: 78,
+        status: 'applied' as const,
+        skillGapTasks: {
+          completed: 1,
+          total: 5
+        },
+        estimatedResponse: '3 days'
+      },
+      {
+        id: '6',
+        title: 'DevOps Engineer',
+        company: 'Razorpay',
+        appliedAt: new Date(Date.now() - 3 * 24 * 60 * 60 * 1000).toISOString(),
+        matchStrength: 85,
+        status: 'viewed' as const,
+        skillGapTasks: {
+          completed: 2,
+          total: 5
+        },
+        estimatedResponse: '5 days'
+      }
+    ];
+
+    setJobs(mockJobs);
+    setAppliedJobs(mockAppliedJobs);
+    setLoading(false);
   }, []);
 
   // Keyboard shortcuts for testing

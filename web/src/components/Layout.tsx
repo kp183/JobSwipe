@@ -30,6 +30,16 @@ export default function Layout({ children }: LayoutProps) {
   const { user } = useAuth();
   const [notifications] = useState(3); // Mock notification count
 
+  // Mock user for static deployment
+  const mockUser = {
+    id: '1',
+    name: 'Demo User',
+    email: 'demo@jobswipe.ai',
+    avatar: 'https://via.placeholder.com/32x32/6366f1/ffffff?text=U'
+  };
+
+  const displayUser = user || mockUser;
+
   const navigation = [
     { 
       name: 'Discover', 
@@ -186,12 +196,12 @@ export default function Layout({ children }: LayoutProps) {
               {/* Profile Avatar */}
               <Link href="/profile" className="flex items-center space-x-2 p-2 hover:bg-gray-100 rounded-lg transition-colors">
                 <img 
-                  src={user?.avatar || 'https://via.placeholder.com/32x32/6366f1/ffffff?text=U'} 
-                  alt={user?.name || 'User'}
+                  src={displayUser?.avatar || 'https://via.placeholder.com/32x32/6366f1/ffffff?text=U'} 
+                  alt={displayUser?.name || 'User'}
                   className="w-8 h-8 rounded-full"
                 />
                 <span className="hidden sm:block text-sm font-medium text-gray-700">
-                  {user?.name || 'User'}
+                  {displayUser?.name || 'User'}
                 </span>
               </Link>
             </div>
